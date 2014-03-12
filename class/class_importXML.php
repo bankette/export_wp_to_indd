@@ -1,7 +1,6 @@
 <?php
 require_once("class_classJM.php");
 require_once("class_contexte.php");
-require_once("class_chapitre.php");
 
 class ImportXML extends ClassJM{
 
@@ -113,9 +112,7 @@ class ImportXML extends ClassJM{
     // Inutile ici, mais permet d'ajouter des actions avant et apr�s l'�xecution du XML 
     // sans polluer la fonction lectureXML
 
-    $this->oChapitre = new Chapitre();
     $this->lectureXml();
-    return $this->oChapitre;
   }
 
    protected function createNewXml($lien){
@@ -131,10 +128,9 @@ class ImportXML extends ClassJM{
     if(!$dom->load($this->getCheminXml())){
       return false;
     }
-    $elements = $dom->getElementsByTagName('DOCUMENT');
+    $elements = $dom->getElementsByTagName('channel');
     $element = $elements->item(0);
-    $this->traiteBalise($element, false);
-    $this->traiteBalise($element, false);
+    $retour = $this->traiteBalise($element, false);
   }
 
   private function traiteBalise($noeud, $withBaliseEntourante = true){
@@ -221,7 +217,7 @@ class ImportXML extends ClassJM{
     return $retour;
   }
   
-  private function baliseTitre($noeud){
+  private function baliseChannel($noeud){
     $sectionMere = $this->contexte->getLastContexteWithName('SECTION');
     //print_r($sectionMere);
     if(isset($sectionMere['attribut']['Niv'])){
@@ -229,226 +225,14 @@ class ImportXML extends ClassJM{
     }else{
       $niv = 7;
     }
-    $retour['debut'] = '<h'.$niv.' class="niveau'.$niv.'">';
-    $retour['fin'] = '</h'.$niv.'>';
-    $retour['gereLesNoeudsFils'] = false;
-    //print_r($retour).'<br/>';
-    return $retour;
-  }
-  
-  private function baliseI($noeud){
-    $sectionMere = $this->contexte->getLastContexteWithName('SECTION');
-    // gestion des b et i en cascade
-    if($this->contexte->isInContexte('B')){
-      $retour['debut'] = '</span><span class="bi">';
-      $retour['fin'] = '</span><span class="b">';
-    }else{
-      $retour['debut'] = '<span class="i">';
-      $retour['fin'] = '</span>';
-    }
-    $retour['gereLesNoeudsFils'] = false;
-    //print_r($retour).'<br/>';
-    return $retour;
-  }
-  
-  private function baliseB($noeud){
-    $sectionMere = $this->contexte->getLastContexteWithName('SECTION');
-    // gestion des b et i en cascade
-    if($this->contexte->isInContexte('I')){
-      $retour['debut'] = '</span><span class="bi">';
-      $retour['fin'] = '</span><span class="i">';
-    }else{
-      $retour['debut'] = '<span class="b">';
-      $retour['fin'] = '</span>';
-    }
-    $retour['gereLesNoeudsFils'] = false;
-    //print_r($retour).'<br/>';
-    return $retour;
-  }
-  
-  private function baliseExergue($noeud){
-    if($noeud->hasAttributes()){
-      $attributes = $noeud->attributes;
-      foreach ($attributes as $index => $domobj)
-      {
-          switch($domobj->name){
-            case 'Type':
-            $type = $domobj->value;
-            break;
-          }
-      }
-    }
-    $retour['debut'] = '<div class="'.$type.'">';
-    $retour['fin'] = '</div>';
-    $retour['gereLesNoeudsFils'] = false;
-    //print_r($retour).'<br/>';
-    return $retour;
-  }
-  
-  private function baliseRef_externes($noeud){
-    $retour['debut'] = '<dfn class="N_article">';
-    $retour['fin'] = '</dfn>';
-    $retour['gereLesNoeudsFils'] = false;
-    //print_r($retour).'<br/>';
-    return $retour;
-  }
-  
-  private function baliseTableau($noeud){
-    $attributes = $noeud->attributes;
-    foreach ($attributes as $index => $domobj)
-    {
-        switch($domobj->name){
-          case "Id":
-            $id = $domobj->value;
-            break;
-          default:
-            
-            break;
-        }
-    }
-
-    $retour['debut'] = '';
+    $retour['debut'] = '<ASCII-WIN><Version:6>';
     $retour['fin'] = '';
     $retour['gereLesNoeudsFils'] = false;
     //print_r($retour).'<br/>';
     return $retour;
   }
-
-    /*private function baliseTable($noeud){
-        $retour['debut'] = '<table>';
-        $retour['fin'] = '</table>';
-        $retour['gereLesNoeudsFils'] = false;
-        return $retour;
-    }
-
-    private function baliseTr($noeud){
-        $retour['debut'] = '<tr>';
-        $retour['fin'] = '</tr>';
-        $retour['gereLesNoeudsFils'] = false;
-        return $retour;
-    }
-
-    private function baliseTd($noeud){
-        $retour['debut'] = '<td>';
-        $retour['fin'] = '</td>';
-        $retour['gereLesNoeudsFils'] = false;
-        return $retour;
-    }
-
-    private function baliseTh($noeud){
-        $retour['debut'] = '<th>';
-        $retour['fin'] = '</th>';
-        $retour['gereLesNoeudsFils'] = false;
-        return $retour;
-    }*/
-
   
-  private function baliseDoc_dev($noeud){
 
-    $contenu = $this->getContenuBalise($noeud);
-
-    $retour['debut'] = '';
-    $retour['fin'] = '';
-    $retour['gereLesNoeudsFils'] = true;
-    
-    // Gestion des liens internes
-    $contenu = preg_replace('#\* (([0-9]){3})#isU', '<dfn class="main">a</dfn><a href="$1.html">$1</a>', $contenu);
-    $contenu = str_replace('-&gt;','<dfn class="fleche">symbole</dfn>', $contenu);
-    $this->oChapitre->setContenu($contenu);
-    //print_r($retour).'<br/>';
-    return $retour;
-  }
-  
-  private function baliseSujet_article($noeud){
-
-    $this->oChapitre->setTitre($this->getContenuBalise($noeud));
-
-    $retour['debut'] = '';
-    $retour['fin'] = '';
-    $retour['gereLesNoeudsFils'] = true;
-    //print_r($retour).'<br/>';
-    return $retour;
-  }
-  
-  private function baliseEnum($noeud){
-    //echo '<pre>';print_r($this->contexte->getFullContexte());'</pre>';
-    $post = '';
-    if($this->contexte->isInContexte('EXERGUE')){
-      $contexte = $this->contexte->getLastContexteWithName('EXERGUE');
-      if(isset($contexte['attribut']['Type'])){
-        $post = '_'.$contexte['attribut']['Type'];
-        //echo '<pre>';print_r($this->contexte->getFullContexte());'</pre>';
-      }
-    }
-    $retour['debut'] = '<div class="enum'.$post.'">';
-    $retour['fin'] = '</div>';
-    $retour['gereLesNoeudsFils'] = false;
-    //print_r($retour).'<br/>';
-    return $retour;
-  }
-  
-  private function baliseTexte($noeud){
-    $acc = $this->getContenuBalise($noeud);
-    $before = '';
-    $after = '';
-    if(substr(strip_tags($acc),0,2)=='- '){
-      // si une balise texte commence par "- " on la traite comme si il y avait une balise enum englobante
-      $retourTemp = $this->baliseEnum($noeud);
-      $before = $retourTemp['debut'];
-      $after = $retourTemp['fin'];
-    }
-    $retour['debut'] = $before.'<p>'.$acc;
-    $retour['fin'] = '</p>'.$after;
-    $retour['gereLesNoeudsFils'] = true;
-    return $retour;
-  }
-  
-  private function baliseRubrique($noeud){
-
-    $this->oChapitre->setRubrique($this->getContenuBalise($noeud));
-
-    $retour['debut'] = '';
-    $retour['fin'] = '';
-    $retour['gereLesNoeudsFils'] = true;
-    //print_r($retour).'<br/>';
-    return $retour;
-  }
-  
-  private function baliseImage($noeud){
-    $attributes = $noeud->attributes;
-    foreach ($attributes as $index => $domobj)
-    {
-        switch($domobj->name){
-          case "Id":
-            $id = $domobj->value;
-            break;
-          case "Format":
-            $format = $domobj->value;
-            break;
-          case "Fichier":
-            $fichier = $domobj->value;
-            break;
-          default:
-            
-            break;
-        }
-    }
-    $cheminImage = $this->getDossierImages().$fichier.'.'.$format;
-    $cheminImageRelatif = 'img/'.$fichier.'.'.$format;
-    //echo '<br/>image '.$cheminImage;
-    if(is_file($cheminImage)){
-      $retour['debut'] = '<p><img src="'.$cheminImageRelatif.'" alt="image"/></p>';
-      $retour['fin'] = '';
-    }else{
-      $retour['debut'] = '';
-      $retour['fin'] = '';
-      echo '<br/>ERREUR image manquante '.$cheminImage;
-    }
-    
-    $retour['gereLesNoeudsFils'] = true;
-    //print_r($retour).'<br/>';
-    return $retour;
-  }
   
   private function getContenuBalise($noeud, $baliseEntourante = false){
     $enfants_niv1 = $noeud->childNodes;
