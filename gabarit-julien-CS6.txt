@@ -1,0 +1,8 @@
+<ASCII-WIN>
+<Version:6>
+<ParaStyle:Titre>titre
+<ParaStyle:SousTitre>par <CharStyle:auteur>julien<CharStyle:>le <CharStyle:date>12-09-13<CharStyle:>
+<ParaStyle:Texte>texte
+<ParaStyle:Titre>titre 2
+<ParaStyle:SousTitre>par <CharStyle:auteur>julien<CharStyle:>le <CharStyle:date>12-09-13<CharStyle:>
+<ParaStyle:Texte>texte 2
