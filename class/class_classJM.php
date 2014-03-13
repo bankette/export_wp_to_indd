@@ -7,9 +7,9 @@ function no_special_character($chaine){
  
     //  les accents
     $chaine=trim($chaine);
-    $chaine= strtr($chaine,"ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ","aaaaaaaaaaaaooooooooooooeeeeeeeecciiiiiiiiuuuuuuuuynn");
+    $chaine= strtr($chaine,"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½","aaaaaaaaaaaaooooooooooooeeeeeeeecciiiiiiiiuuuuuuuuynn");
  
-    //  les caracètres spéciaux (aures que lettres et chiffres en fait)
+    //  les caracï¿½tres spï¿½ciaux (aures que lettres et chiffres en fait)
     $chaine = preg_replace('/([^.a-z0-9]+)/i', '-', $chaine);
     $chaine = strtolower($chaine);
  
@@ -19,13 +19,13 @@ function no_special_character($chaine){
 
 function viderDossier($dossier_traite){
    
-  $repertoire = opendir($dossier_traite); // On définit le répertoire dans lequel on souhaite travailler.
+  $repertoire = opendir($dossier_traite); // On dï¿½finit le rï¿½pertoire dans lequel on souhaite travailler.
    
-  while (false !== ($fichier = readdir($repertoire))) // On lit chaque fichier du répertoire dans la boucle.
+  while (false !== ($fichier = readdir($repertoire))) // On lit chaque fichier du rï¿½pertoire dans la boucle.
   {
-  $chemin = $dossier_traite."/".$fichier; // On définit le chemin du fichier à effacer.
+  $chemin = $dossier_traite."/".$fichier; // On dï¿½finit le chemin du fichier ï¿½ effacer.
    
-  // Si le fichier n'est pas un répertoire…
+  // Si le fichier n'est pas un rï¿½pertoireï¿½
   if ($fichier != ".." AND $fichier != "." AND !is_dir($chemin))
    {
       unlink($chemin); // On efface.
@@ -45,13 +45,13 @@ function supprimerDossier($dossier_traite){
 
 function chmod_Dir($dossier_traite){
    
-  $repertoire = opendir($dossier_traite); // On définit le répertoire dans lequel on souhaite travailler.
+  $repertoire = opendir($dossier_traite); // On dï¿½finit le rï¿½pertoire dans lequel on souhaite travailler.
    
-  while (false !== ($fichier = readdir($repertoire))) // On lit chaque fichier du répertoire dans la boucle.
+  while (false !== ($fichier = readdir($repertoire))) // On lit chaque fichier du rï¿½pertoire dans la boucle.
   {
-  $chemin = $dossier_traite."/".$fichier; // On définit le chemin du fichier à effacer.
+  $chemin = $dossier_traite."/".$fichier; // On dï¿½finit le chemin du fichier ï¿½ effacer.
    
-  // Si le fichier n'est pas un répertoire…
+  // Si le fichier n'est pas un rï¿½pertoireï¿½
   if ($fichier != ".." AND $fichier != "." AND !is_dir($chemin))
    {
       chmod($chemin, 0777); 
@@ -112,10 +112,8 @@ function callstack() {
 } 
 
 function textForXml($text){
-  $text = str_replace(' & ',' &amp; ',$text);
-  $text = str_replace('<','&lt;',$text);
-  $text = str_replace('>','&gt;',$text);
-  return $text;
+
+  return utf8_decode($text);
 }
     #----------------------------------------------------
     # redimensionne une image en une seule taille
@@ -124,7 +122,7 @@ function textForXml($text){
     {
         $taux_mini=90;
        
-        // Définition de la largeur et de la hauteur maximale
+        // Dï¿½finition de la largeur et de la hauteur maximale
         $t=split("x",$taille_image_upload);
         //echo $taille_image_upload;
         if($t[0]!="") $width = $t[0];

@@ -20,10 +20,9 @@ class ImportXML extends ClassJM{
                     "br" => "br"
   );
   
-  private $baliseAIgnorer = array("AIgnorer","inconnu", "table", "tr", "td", "th", "tbody", "thead");
+  private $baliseAIgnorer = array();
   
-  private $baliseContenu = array("section","enbref","div","avantdepartir","surplace","evenements",
-                                "internet","circuit","etape"
+  private $baliseContenu = array("item"
   );
   
   private $baliseNonConsidere = array(
@@ -112,7 +111,7 @@ class ImportXML extends ClassJM{
     // Inutile ici, mais permet d'ajouter des actions avant et apr�s l'�xecution du XML 
     // sans polluer la fonction lectureXML
 
-    $this->lectureXml();
+    return $this->lectureXml();
   }
 
    protected function createNewXml($lien){
@@ -130,13 +129,14 @@ class ImportXML extends ClassJM{
     }
     $elements = $dom->getElementsByTagName('channel');
     $element = $elements->item(0);
-    $retour = $this->traiteBalise($element, false);
+    $retour =   $this->traiteBalise($element, false);
+    return $retour;
   }
 
   private function traiteBalise($noeud, $withBaliseEntourante = true){
     // On r�cup�re le nom de la balise
     $nomBalise = $noeud->nodeName;
-    $nomFonction = 'balise'.ucfirst($nomBalise);
+    $nomFonction = 'balise'.ucfirst(str_replace(":","",$nomBalise));
     //echo 'Nom balise : '.$nomBalise.'<br/>';
     //echo '<pre>';print_r(callstack());echo '</pre>';
     // On r�cup�re les attributs de la balise
@@ -181,13 +181,9 @@ class ImportXML extends ClassJM{
             $ignorer = true;
         }else{
            // Sinon on cr� un div avec la class = au nom de la balise
-          if($withBaliseEntourante){
-            $accumulateur = '<div class="'.$nomBalise.'">';
-            $finAccumulateur = '</div>';
-          }else{
             $accumulateur = '';
             $finAccumulateur = '';
-          }
+            $ignorer = true;
         }
         $enfants_niv1 = $noeud->childNodes;
         if(!isset($ignorer) || $ignorer===false){
@@ -218,19 +214,79 @@ class ImportXML extends ClassJM{
   }
   
   private function baliseChannel($noeud){
-    $sectionMere = $this->contexte->getLastContexteWithName('SECTION');
-    //print_r($sectionMere);
-    if(isset($sectionMere['attribut']['Niv'])){
-      $niv = $sectionMere['attribut']['Niv']+1;
-    }else{
-      $niv = 7;
-    }
-    $retour['debut'] = '<ASCII-WIN><Version:6>';
+    $retour['debut'] = '<ASCII-WIN>'.chr(10).'<Version:6>';
     $retour['fin'] = '';
     $retour['gereLesNoeudsFils'] = false;
     //print_r($retour).'<br/>';
     return $retour;
   }
+    private function baliseTitle($noeud){
+        if($this->contexte->isInContexte("item")){
+            $retour['debut'] = '<ParaStyle:Titre>';
+            $retour['fin'] = '';
+            $retour['gereLesNoeudsFils'] = false;
+        }else{
+            $retour['debut'] = '';
+            $retour['fin'] = '';
+            $retour['gereLesNoeudsFils'] = true;
+        }
+
+        //print_r($retour).'<br/>';
+        return $retour;
+    }
+
+    private function baliseItem($noeud){
+        $retour['debut'] = '';
+        $retour['fin'] = '';
+        $retour['gereLesNoeudsFils'] = false;
+        //print_r($retour).'<br/>';
+        return $retour;
+    }
+
+    private function balisePubDate($noeud){
+
+        if($this->contexte->isInContexte("item")){
+            $retour['debut'] = '<ParaStyle:SousTitre>Le ';
+            $retour['fin'] = '';
+            $retour['gereLesNoeudsFils'] = false;
+        }else{
+            $retour['debut'] = '';
+            $retour['fin'] = '';
+            $retour['gereLesNoeudsFils'] = true;
+        }
+
+        //print_r($retour).'<br/>';
+        return $retour;
+    }
+
+    private function baliseDccreator($noeud){
+        if($this->contexte->isInContexte("item")){
+            $retour['debut'] = '<ParaStyle:SousTitre>Le ';
+            $retour['fin'] = '';
+            $retour['gereLesNoeudsFils'] = false;
+        }else{
+            $retour['debut'] = '';
+            $retour['fin'] = '';
+            $retour['gereLesNoeudsFils'] = true;
+        }
+        //print_r($retour).'<br/>';
+        return $retour;
+    }
+    private function baliseContentencoded($noeud){
+        if($this->contexte->isInContexte("item")){
+            $retour['debut'] = '<ParaStyle:Texte>Le ';
+            $retour['fin'] = '';
+            $retour['gereLesNoeudsFils'] = false;
+        }else{
+            $retour['debut'] = '';
+            $retour['fin'] = '';
+            $retour['gereLesNoeudsFils'] = true;
+        }
+        //print_r($retour).'<br/>';
+        return $retour;
+    }
+
+
   
 
   
@@ -243,6 +299,10 @@ class ImportXML extends ClassJM{
     }
     return $acc;
   }
+
+
+
+
  
  
 }

@@ -28,7 +28,18 @@ $arbo = array();
 foreach($listeFichierXML as $file){
     $oXML->setCheminXml($file);
     echo "traitement de : ".$file;
-    $oXML->traiteXml($file);
+    $retour = $oXML->traiteXml($file);
+    $lines = explode(chr(10), $retour);
+    $new_content = "";
+    foreach ($lines as $line) {
+        if (strlen(trim($line)) > 0) {
+            $new_content .= str_replace("\t","",$line) . chr(10);
+        }
+    }
+    unlink("Out/texteRef.txt");
+    $file=fopen("Out/texteRef.txt",'a+', true);
+    fwrite($file,utf8_encode($new_content));
+    fclose($file);
 
 }
 ?>
