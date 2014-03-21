@@ -1,0 +1,8 @@
+<ASCII-WIN>
+<Version:8>
+<ParaStyle:NormalParagraphStyle>textedfdfd
+<ParaStyle:NormalParagraphStyle><IndexEntry:=<IndexEntryType:IndexPageEntry><IndexEntryRangeType:kCurrentPage><IndexEntryDisplayString:importImg><IndexEntryDisplayString:first><IndexEntryDisplayString:nomimg>>
+<ParaStyle:NormalParagraphStyle><IndexEntry:=<IndexEntryType:IndexPageEntry><IndexEntryRangeType:kCurrentPage><IndexEntryDisplayString:importImg><IndexEntryDisplayString:first><IndexEntryDisplayString:nomimg2>>
+<ParaStyle:NormalParagraphStyle><IndexEntry:=<IndexEntryType:IndexPageEntry><IndexEntryRangeType:kCurrentPage><IndexEntryDisplayString:importImg><IndexEntryDisplayString:first><IndexEntryDisplayString:nomimg3>>
+<ParaStyle:NormalParagraphStyle><IndexEntry:=<IndexEntryType:IndexPageEntry><IndexEntryRangeType:kCurrentPage><IndexEntryDisplayString:importImg><IndexEntryDisplayString:nomimg>>
+<ParaStyle:NormalParagraphStyle><IndexEntry:=<IndexEntryType:IndexPageEntry><IndexEntryRangeType:kCurrentPage><IndexEntryDisplayString:importImg><IndexEntryDisplayString:first><IndexEntryDisplayString:nomimg>>

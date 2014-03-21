@@ -213,7 +213,6 @@ class ImportXML extends ClassJM{
             }else{
                 $retour = "";
             }
-
         }
       }
       
