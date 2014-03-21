@@ -8,6 +8,7 @@ class ImportXML extends ClassJM{
   protected $xml_chemin;
   protected $contexte;
   protected $oChapitre;
+  protected $lastRef;
   
   
   private $baliseHtml = array(
@@ -203,7 +204,16 @@ class ImportXML extends ClassJM{
         }elseif(in_array($nomBalise, $this->baliseAutoFermante)){
             $retour = '<'.$this->baliseAutoFermante[$nomBalise].'/>';
         }else{
-          $retour = $this->textForXml($noeud->nodeValue);
+            $val = $noeud->nodeValue;
+            if(trim($val)!=""){
+                $texte = $this->textForXml($noeud->nodeValue);
+                $texte = str_replace("\n","\n".$this->lastRef, $texte);
+                $texte = str_replace($this->lastRef."\n","", $texte);
+                $retour = $texte."\n";
+            }else{
+                $retour = "";
+            }
+
         }
       }
       
@@ -214,7 +224,7 @@ class ImportXML extends ClassJM{
   }
   
   private function baliseChannel($noeud){
-    $retour['debut'] = '<ASCII-WIN>'.chr(10).'<Version:6>';
+    $retour['debut'] = '<ASCII-WIN>'.chr(10).'<Version:6>'.chr(10);
     $retour['fin'] = '';
     $retour['gereLesNoeudsFils'] = false;
     //print_r($retour).'<br/>';
@@ -222,7 +232,8 @@ class ImportXML extends ClassJM{
   }
     private function baliseTitle($noeud){
         if($this->contexte->isInContexte("item")){
-            $retour['debut'] = '<ParaStyle:Titre>';
+            $this->lastRef = '<ParaStyle:Titre>';
+            $retour['debut'] = $this->lastRef;
             $retour['fin'] = '';
             $retour['gereLesNoeudsFils'] = false;
         }else{
@@ -261,7 +272,7 @@ class ImportXML extends ClassJM{
 
     private function baliseDccreator($noeud){
         if($this->contexte->isInContexte("item")){
-            $retour['debut'] = '<ParaStyle:SousTitre>Le ';
+            $retour['debut'] = '<ParaStyle:SousTitre>Par ';
             $retour['fin'] = '';
             $retour['gereLesNoeudsFils'] = false;
         }else{
@@ -274,7 +285,8 @@ class ImportXML extends ClassJM{
     }
     private function baliseContentencoded($noeud){
         if($this->contexte->isInContexte("item")){
-            $retour['debut'] = '<ParaStyle:Texte>Le ';
+            $this->lastRef = '<ParaStyle:Texte>';
+            $retour['debut'] = $this->lastRef;
             $retour['fin'] = '';
             $retour['gereLesNoeudsFils'] = false;
         }else{
