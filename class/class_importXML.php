@@ -210,6 +210,7 @@ class ImportXML extends ClassJM{
                 $texte = str_replace("\n","\n".$this->lastRef, $texte);
                 $texte = str_replace($this->lastRef."\n","", $texte);
                 $retour = $texte."\n";
+                $retour = $this->traiteImages($retour);
             }else{
                 $retour = "";
             }
@@ -256,9 +257,11 @@ class ImportXML extends ClassJM{
     private function balisePubDate($noeud){
 
         if($this->contexte->isInContexte("item")){
-            $retour['debut'] = '<ParaStyle:SousTitre>Le ';
+            $date = $this->getContenuBalise($noeud);
+            $oDate = new DateTime($date);
+            $retour['debut'] = '<ParaStyle:SousTitre>Le '.$oDate->format('d-m-Y');
             $retour['fin'] = '';
-            $retour['gereLesNoeudsFils'] = false;
+            $retour['gereLesNoeudsFils'] = true;
         }else{
             $retour['debut'] = '';
             $retour['fin'] = '';
@@ -271,7 +274,7 @@ class ImportXML extends ClassJM{
 
     private function baliseDccreator($noeud){
         if($this->contexte->isInContexte("item")){
-            $retour['debut'] = '<ParaStyle:SousTitre>Par ';
+            $retour['debut'] = ' par ';
             $retour['fin'] = '';
             $retour['gereLesNoeudsFils'] = false;
         }else{
@@ -310,6 +313,23 @@ class ImportXML extends ClassJM{
     }
     return $acc;
   }
+
+    private function traiteImages($texte){
+        //l'expression régulière permettant de trouver les balise images
+        $output = preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/Ui', $texte, $matches);
+        //pour chacuns des element trouvés
+        for ($i = 0; $i < $output; $i++) {
+            //on affiche le contenus de la balise src.
+            //echo $matches[1][$i] . '';
+            //et on affiche l'image correspondante.
+            //si ca commence pat http on affiche directement
+            if (substr($matches[1][$i], 0, 7) == 'http://' || substr($matches[1][$i], 0, 8) == 'https://') {
+                $pathImg =  $matches[1][$i];
+                //copy($pathImg,"Out/images/".basename($pathImg));
+            }
+        }
+        return $texte;
+    }
 
 
 
