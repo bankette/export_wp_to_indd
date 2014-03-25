@@ -113,6 +113,7 @@ function callstack() {
 
 function textForXml($text){
 
+    strip_tags($text, "<img/>");
   return utf8_decode($text);
 }
     #----------------------------------------------------

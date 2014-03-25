@@ -326,15 +326,25 @@ class ImportXML extends ClassJM{
             if (substr($matches[1][$i], 0, 7) == 'http://' || substr($matches[1][$i], 0, 8) == 'https://') {
                 $pathImg =  $matches[1][$i];
                 //copy($pathImg,"Out/images/".basename($pathImg));
+                $baliseRef = "<IndexEntry:=<IndexEntryType:IndexPageEntry><IndexEntryRangeType:kCurrentPage><IndexEntryDisplayString:importImg><IndexEntryDisplayString:"."Out/images/".basename($pathImg).">>";
+                $texte = str_replace($matches[0][$i],"\n".$baliseRef,$texte);
             }
         }
+        //l'expression régulière permettant de trouver les balise images
+        $output = preg_match_all('/<a.*>/Ui', $texte, $matches);
+        //pour chacuns des element trouvés
+        for ($i = 0; $i < $output; $i++) {
+            $texte = str_replace($matches[0][$i],"",$texte);
+        }
+
+        //l'expression régulière permettant de trouver les balise images
+        $output = preg_match_all('/<\/a.*>/Ui', $texte, $matches);
+        //pour chacuns des element trouvés
+        for ($i = 0; $i < $output; $i++) {
+            $texte = str_replace($matches[0][$i],"",$texte);
+        }
+
         return $texte;
     }
-
-
-
-
- 
- 
 }
 ?>

@@ -33,7 +33,9 @@ foreach($listeFichierXML as $file){
     $new_content = "";
     foreach ($lines as $line) {
         if (strlen(trim($line)) > 0) {
-            $new_content .= str_replace("\t","",$line) . chr(10);
+            if($line!="<ParaStyle:Texte>"){
+                $new_content .= str_replace("\t","",$line) . chr(10);
+            }
         }
     }
     unlink("Out/texteRef.txt");
